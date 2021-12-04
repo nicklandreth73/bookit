@@ -2,37 +2,30 @@ import Room from "../models/room"
 import ErrorHandler from "../utils/errorHandler"
 import APIfeatures from "../utils/apiFeatures"
 
-
-
 // get all rooms
 
 const allRooms = (req, res, next) => {
-
   let roomsCount = 0
-  
 
   const apiFeatures = new APIfeatures(Room.find(), req.query)
-  .search()
-  .filter()
-  .pagination()
+    .search()
+    .filter()
+    .pagination()
 
   Room.countDocuments()
-  .then( (count) => {
-    roomsCount = count
-  return apiFeatures.query
-}
-  )
-    .then((rooms) => 
-    {
-      res.status(200)
-      .json({
+    .then((count) => {
+      roomsCount = count
+      return apiFeatures.query
+    })
+    .then((rooms) => {
+      res.status(200).json({
+        // I decided that results per page would be better controlled from the front end
         success: true,
         roomsCount,
-        filteredRoomCount: rooms.length,
+        resPerPage: 4,
+        filteredRoomsCount: rooms.length,
         rooms,
-
       })
-
     })
     .catch(next)
 }
