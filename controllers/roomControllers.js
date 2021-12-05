@@ -6,11 +6,19 @@ import APIfeatures from "../utils/apiFeatures"
 
 const allRooms = (req, res, next) => {
   let roomsCount = 0
+  let filteredRooms = 0
 
   const apiFeatures = new APIfeatures(Room.find(), req.query)
     .search()
     .filter()
     .pagination()
+
+  const filtered = new APIfeatures(Room.find(), req.query).search().filter()
+
+  filtered.query.exec().then((rooms) => {
+    filteredRooms = rooms.length
+    console.log(filteredRooms)
+  })
 
   Room.countDocuments()
     .then((count) => {
@@ -22,8 +30,8 @@ const allRooms = (req, res, next) => {
         // I decided that results per page would be better controlled from the front end
         success: true,
         roomsCount,
-        resPerPage: 4,
-        filteredRoomsCount: rooms.length,
+        resPerPage: Number(apiFeatures.queryStr.resPerPage),
+        filteredRoomsCount: filteredRooms,
         rooms,
       })
     })

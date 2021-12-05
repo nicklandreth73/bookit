@@ -27,4 +27,4 @@ const initStore = (initialState) => {
   return createStore(reducer, initialState, bindMiddleware([thunkMiddleware]))
 }
 
-export const wrapper = createWrapper(initStore, { debug: true })
+export const wrapper = createWrapper(initStore)
