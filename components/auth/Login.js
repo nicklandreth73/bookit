@@ -4,21 +4,24 @@ import Link from "next/link"
 import { signIn } from "next-auth/react"
 
 import { toast } from "react-toastify"
+import ButtonLoader from "../layout/ButtonLoader"
 
 const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setLoading(true)
 
-    const result = await signIn("credintials", {
+    const result = await signIn("credentials", {
       redirect: false,
       email,
       password,
     })
-    console.log(result)
     if (result.error) {
+      setTimeout(() => setLoading(false), 600)
       toast.error(result.error)
     } else {
       toast.success("You are now logged in")
@@ -61,8 +64,9 @@ const Login = () => {
                 type="submit"
                 className="btn btn-block py-3"
                 onClick={handleSubmit}
+                disabled={loading}
               >
-                LOGIN
+                {loading ? <ButtonLoader /> : "Login"}
               </button>
               <a href="#" className="float-right mt-3">
                 New User?

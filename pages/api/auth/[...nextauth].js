@@ -13,7 +13,7 @@ export default NextAuth({
     CredentialsProvider({
       // The URL to redirect to after sign-in.
       // If not specified, users will be redirected to '/'
-      // (or the page specified by 'redirect' in the sign-in options).
+      // (or the page specified by 'redirect' in the sign-in options)
 
       async authorize(credentials) {
         dbConnect()
@@ -24,8 +24,8 @@ export default NextAuth({
         if (!email || !password) {
           throw new Error("Email and password are required")
         }
-        // Check if user exists
-        const user = await User.findOne({ email: email })
+        // Check if log in exists
+        const user = await User.findOne({ email: email }).select("+password")
         if (!user) {
           throw new Error("Email not found")
         }
