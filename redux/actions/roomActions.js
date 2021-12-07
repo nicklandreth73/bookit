@@ -31,7 +31,7 @@ export const getRooms =
     } catch (error) {
       dispatch({
         type: ALL_ROOMS_FAILURE,
-        payload: error.response.data.message,
+        payload: error.message,
       })
     }
   }

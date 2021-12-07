@@ -15,6 +15,8 @@ export default NextAuth({
       // If not specified, users will be redirected to '/'
       // (or the page specified by 'redirect' in the sign-in options)
 
+      name: "Credentials",
+
       async authorize(credentials) {
         dbConnect()
 
@@ -34,6 +36,9 @@ export default NextAuth({
         if (!isValid) {
           throw new Error("Invalid password")
         }
+        user.picture = user.avatar
+        user.name = user.userName
+
         // Return user
         return Promise.resolve(user)
       },
@@ -41,11 +46,15 @@ export default NextAuth({
   ],
   callbacks: {
     jwt: async (token, user) => {
+      // Store the token in the session
+      // This is used to authenticate the user
+      // on each request
       user && (token.user = user)
       return Promise.resolve(token)
     },
     session: async (session, token) => {
       // Add user to session
+      console.log("token: " + token)
       session.user = token.user
       return Promise.resolve(session)
     },

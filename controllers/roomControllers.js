@@ -17,7 +17,6 @@ const allRooms = (req, res, next) => {
 
   filtered.query.exec().then((rooms) => {
     filteredRooms = rooms.length
-    console.log(filteredRooms)
   })
 
   Room.countDocuments()
