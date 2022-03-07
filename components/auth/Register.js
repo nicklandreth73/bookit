@@ -8,6 +8,8 @@ import ButtonLoader from "../layout/ButtonLoader"
 import { useDispatch, useSelector } from "react-redux"
 import { registerUser, clearErrors } from "../../redux/actions/userActions"
 
+import imageHandler from "../../utils/imageHandler"
+
 const Register = () => {
   const dispatch = useDispatch()
   const router = useRouter()
@@ -28,6 +30,8 @@ const Register = () => {
 
   const { success, errors, loading } = useSelector((state) => state.auth)
 
+  const [imageCompressing, setImageCompressing] = useState(false)
+
   useEffect(() => {
     if (success) {
       toast.success("Registration Successful")
@@ -42,6 +46,8 @@ const Register = () => {
 
   const submitHandler = (e) => {
     e.preventDefault()
+    if (imageCompressing)
+      toast.warning("Please wait while we optimize your image")
     if (password !== confirmPassword)
       return toast.error("Passwords do not match")
 
@@ -51,21 +57,24 @@ const Register = () => {
       password,
       avatar,
     }
+    console.log(userData.avatar)
     dispatch(registerUser(userData))
   }
 
   const onChangeHandler = (e) => {
     if (e.target.name === "avatar") {
+      setImageCompressing(true)
       const reader = new FileReader()
-      const file = e.target.files[0]
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setAvatarPreview(reader.result)
-          setAvatar(reader.result)
+      imageHandler(e.target.files[0]).then((file) => {
+        reader.onload = () => {
+          if (reader.readyState === 2) {
+            setAvatarPreview(reader.result)
+            setAvatar(reader.result)
+          }
         }
-      }
 
-      reader.readAsDataURL(file)
+        reader.readAsDataURL(file)
+      })
     } else {
       setUser({ ...user, [e.target.name]: e.target.value })
     }

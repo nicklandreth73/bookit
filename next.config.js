@@ -6,6 +6,12 @@ module.exports = {
     CLOUDINARY_CLOUD_NAME: "dmjzyj80v",
     CLOUDINARY_API_KEY: "951137411934139",
     CLOUDINARY_API_SECRET: "Xd1uI4zxvGPcJoC7X8HpU2EJltQ",
+
+    SMPT_SERVICE: "gmail",
+    SMPT_USER: "nicklandreth75@gmail.com",
+    SMPT_PASSWORD: "bwdpchdodomkgmje",
+    SMPT_FROM_EMAIL: "nicklandreth75@gmail.com",
+    SMPT_FROM_NAME: "Bookit",
   },
   images: {
     domains: ["a0.muscache.com", "res.cloudinary.com"],

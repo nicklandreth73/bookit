@@ -2,6 +2,8 @@ import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 
+import UserName from "./UserName"
+
 const Header = () => {
   return (
     <nav className="navbar row justify-content-center sticky-top">
@@ -21,11 +23,7 @@ const Header = () => {
           </div>
         </div>
         <div className="col-3 mt-3 mt-md-0 text-center">
-          <Link href="/login">
-            <a className="btn btn-danger px-4 text-white login-header-btn float-right">
-              Login
-            </a>
-          </Link>
+          <UserName />
         </div>
       </div>
     </nav>

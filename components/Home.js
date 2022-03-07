@@ -72,9 +72,6 @@ export const Home = () => {
 
   return (
     <>
-      {console.log(
-        "count: " + rooms.length + " filteredRoomsCount: " + filteredRoomsCount
-      )}
       <section id="rooms" className="container mt-5">
         <h2 className="mb-3 ml-2 stays-heading">
           {location ? `Rooms in ${capitalizeWords(location)}` : "All rooms"}
@@ -95,7 +92,7 @@ export const Home = () => {
           )}
         </div>
       </section>
-      {console.log(filteredRoomsCount / resPerPage)}
+
       {filteredRoomsCount > resPerPage && (
         <div className="d-flex justify-content-center mt-3">
           <Pagination

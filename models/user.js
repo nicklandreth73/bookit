@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 import validator from "validator"
+import crypto from "crypto"
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -70,6 +71,21 @@ userSchema.pre("save", async function (next) {
 // Compare the plain text password with the hashed password in the database
 userSchema.methods.comparePassword = async function (plainTextPassword) {
   return await bcrypt.compare(plainTextPassword, this.password)
+}
+
+// Generate password reset token
+
+userSchema.methods.getPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(20).toString("hex")
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex")
+
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000
+
+  return resetToken
 }
 
 export default mongoose.models.User || mongoose.model("User", userSchema)

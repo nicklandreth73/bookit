@@ -8,7 +8,7 @@ const Search = () => {
   const [guests, setGuests] = useState("")
   const [category, setCategory] = useState("")
 
-  //function definitions
+  //function definitions needs refactoring
   const submitHandler = (e) => {
     e.preventDefault()
     if (location === "" && guests === "" && category === "") {

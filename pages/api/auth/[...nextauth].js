@@ -6,7 +6,7 @@ import dbConnect from "../../../config/dbConnect"
 
 export default NextAuth({
   session: {
-    jwt: true,
+    strategy: "jwt",
   },
 
   providers: [
@@ -45,16 +45,16 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    jwt: async (token, user) => {
+    jwt: async ({ token, user }) => {
       // Store the token in the session
       // This is used to authenticate the user
       // on each request
       user && (token.user = user)
       return Promise.resolve(token)
     },
-    session: async (session, token) => {
+    session: async ({ session, token }) => {
       // Add user to session
-      console.log("token: " + token)
+
       session.user = token.user
       return Promise.resolve(session)
     },

@@ -22,7 +22,7 @@ export default (err, req, res, next) => {
   res.status(err.statusCode).json({
     success: false,
     error,
-    message: err.message,
-    stack: err.stack,
+    message: error.message,
+    stack: error.stack,
   })
 }

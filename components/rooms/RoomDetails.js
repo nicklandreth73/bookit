@@ -1,15 +1,79 @@
-import React, { useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import Head from "next/head"
+import { useRouter } from "next/router"
 import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux"
 import { clearErrors } from "../../redux/actions/roomActions"
 import { Carousel } from "react-bootstrap"
 import RoomFeatures from "./RoomFeatures"
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { toast } from "react-toastify"
+import { checkBooking } from "../../redux/actions/bookingActions"
+import { CHECK_BOOKING_RESET } from "../../redux/constants/bookingConstants"
+
+import axios from "axios"
 
 const RoomDetails = () => {
+  const [checkInDate, setCheckInDate] = useState()
+  const [checkOutDate, setCheckOutDate] = useState()
+  const [daysBooked, setDaysBooked] = useState()
+
+  const { user } = useSelector((state) => state.loadedUser)
   const { room, error } = useSelector((state) => state.roomDetails)
+  const { available, loading: bookingLoading } = useSelector(
+    (state) => state.checkBooking
+  )
   const dispatch = useDispatch()
+  const router = useRouter()
+  const { id } = router.query
+
+  const onDatePickerChange = (dates) => {
+    const [checkInDate, checkOutDate] = dates
+
+    console.log(dates)
+    setCheckInDate(checkInDate)
+    setCheckOutDate(checkOutDate)
+
+    if (checkInDate && checkOutDate) {
+      dispatch({ type: CHECK_BOOKING_RESET })
+      const days = Math.floor(
+        (new Date(checkOutDate) - new Date(checkInDate)) / 86400000 + 1
+      )
+      setDaysBooked(days)
+      dispatch(
+        checkBooking(id, checkInDate.toISOString(), checkOutDate.toISOString())
+      )
+    }
+  }
+
+  const onBookRoom = async () => {
+    const bookingData = {
+      room: router.query.id,
+      checkInDate,
+      checkOutDate,
+      daysBooked,
+      datePaid: Date.now(),
+      amountPaid: 90,
+      paymentInfo: {
+        id: "STRIPE_PAYMENT_ID",
+        status: "STRIPE_PAYMENT_STATUS",
+      },
+    }
+    console.log(bookingData)
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+    try {
+      const data = await axios.post("/api/bookings", bookingData, config)
+      console.log(data)
+    } catch (error) {
+      console.log(error.response)
+    }
+  }
 
   useEffect(() => {
     if (error) {
@@ -61,7 +125,47 @@ const RoomDetails = () => {
               <p className="price-per-night">
                 <b>${room.pricePerNight}</b> / night
               </p>
-              <button className="btn btn-block py-3 booking-btn">Pay</button>
+              <hr />
+
+              <p className="mt-5 mb-3">Pick Check In & Check Out Date</p>
+
+              <DatePicker
+                className="w-100"
+                selected={checkInDate}
+                onChange={onDatePickerChange}
+                startDate={checkInDate}
+                endDate={checkOutDate}
+                minDate={new Date()}
+                selectsRange
+                inline
+              />
+              {available === true && user && (
+                <>
+                  <div className="d-none">
+                    {toast.success("This room is available book now!")}
+                  </div>
+                  <button
+                    className="btn btn-block py-3 booking-btn"
+                    onClick={onBookRoom}
+                  >
+                    Pay
+                  </button>
+                </>
+              )}
+              {available === true && !user && (
+                <div className="d-none">
+                  {toast.success(
+                    "This room is available. Log in and book now!"
+                  )}
+                </div>
+              )}
+              {available === false && (
+                <div className="d-none">
+                  {toast.error(
+                    "This room is not available on the dates you chose, check out our other listings."
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
