@@ -103,4 +103,14 @@ const checkBookedDatesOfRoom = catchAsyncErrors(async (req, res) => {
   })
 })
 
-export { newBooking, checkRoomAvailability, checkBookedDatesOfRoom }
+// Get all bookings of current user => POST /api/bookings/me
+const myBookings = catchAsyncErrors(async (req, res) => {
+  const bookings = await Booking.find({ user: req.user._id })
+
+  res.status(200).json({
+    success: true,
+    bookings,
+  })
+})
+
+export { newBooking, checkRoomAvailability, checkBookedDatesOfRoom, myBookings }
