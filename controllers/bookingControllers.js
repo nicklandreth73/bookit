@@ -3,6 +3,11 @@ import Booking from "../models/booking"
 import catchAsyncErrors from "../middleware/catchAsyncErrors"
 import ErrorHandler from "../utils/errorHandler"
 
+import Moment from "moment"
+import { extendMoment } from "moment-range"
+
+const moment = extendMoment(Moment)
+
 // Create new Booking => POST /api/bookings
 const newBooking = catchAsyncErrors(async (req, res) => {
   const {
@@ -35,13 +40,10 @@ const newBooking = catchAsyncErrors(async (req, res) => {
 
 // Check rooom booking availability => POST /api/bookings/check
 const checkRoomAvailability = catchAsyncErrors(async (req, res) => {
-  console.log("got to controller")
   let { roomId, checkInDate, checkOutDate } = req.query
 
   checkInDate = new Date(checkInDate)
   checkOutDate = new Date(checkOutDate)
-
-  console.log("got to control and pulled from req.query")
 
   const bookings = await Booking.find({
     room: roomId,
@@ -71,5 +73,34 @@ const checkRoomAvailability = catchAsyncErrors(async (req, res) => {
     isAvailable,
   })
 })
+// Check which dates are booked for a room => POST /api/bookings/check_booked_dates
+const checkBookedDatesOfRoom = catchAsyncErrors(async (req, res) => {
+  let { roomId } = req.query
 
-export { newBooking, checkRoomAvailability }
+  const bookings = await Booking.find({ room: roomId })
+
+  let bookedDates = []
+
+  const timeDifference = moment().utcOffset() / 60
+
+  console.log(timeDifference)
+
+  bookings.forEach((booking) => {
+    const checkInDate = moment(booking.checkInDate).add(timeDifference, "hours")
+    const checkOutDate = moment(booking.checkOutDate).add(
+      timeDifference,
+      "hours"
+    )
+
+    const range = moment.range(moment(checkInDate), moment(checkOutDate))
+    const dates = Array.from(range.by("day"))
+    bookedDates = bookedDates.concat(dates)
+  })
+
+  res.status(200).json({
+    success: true,
+    bookedDates,
+  })
+})
+
+export { newBooking, checkRoomAvailability, checkBookedDatesOfRoom }
