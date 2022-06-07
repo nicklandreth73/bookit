@@ -1,5 +1,9 @@
+console.log("reached me api")
+
 import nc from "next-connect"
 import dbConnect from "../../../config/dbConnect"
+
+console.log("reached me api")
 
 import { myBookings } from "../../../controllers/bookingControllers"
 

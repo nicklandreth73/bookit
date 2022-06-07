@@ -61,7 +61,6 @@ const checkRoomAvailability = catchAsyncErrors(async (req, res) => {
 
   //Check if there is any booking available for this
   let isAvailable
-  console.log(bookings)
   if (bookings && bookings.length === 0) {
     isAvailable = true
   } else {
@@ -82,8 +81,6 @@ const checkBookedDatesOfRoom = catchAsyncErrors(async (req, res) => {
   let bookedDates = []
 
   const timeDifference = moment().utcOffset() / 60
-
-  console.log(timeDifference)
 
   bookings.forEach((booking) => {
     const checkInDate = moment(booking.checkInDate).add(timeDifference, "hours")
@@ -106,11 +103,34 @@ const checkBookedDatesOfRoom = catchAsyncErrors(async (req, res) => {
 // Get all bookings of current user => POST /api/bookings/me
 const myBookings = catchAsyncErrors(async (req, res) => {
   const bookings = await Booking.find({ user: req.user._id })
-
   res.status(200).json({
     success: true,
     bookings,
   })
 })
 
-export { newBooking, checkRoomAvailability, checkBookedDatesOfRoom, myBookings }
+// Get booking details => POST /api/bookings/:id
+const getBookingDetails = catchAsyncErrors(async (req, res) => {
+  const booking = await Booking.findById(req.query.id)
+    .populate({
+      path: "room",
+      select: "name pricePerNight images",
+    })
+    .populate({
+      path: "user",
+      select: "userName email",
+    })
+
+  res.status(200).json({
+    success: true,
+    booking,
+  })
+})
+
+export {
+  newBooking,
+  checkRoomAvailability,
+  checkBookedDatesOfRoom,
+  myBookings,
+  getBookingDetails,
+}

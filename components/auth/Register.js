@@ -57,7 +57,6 @@ const Register = () => {
       password,
       avatar,
     }
-    console.log(userData.avatar)
     dispatch(registerUser(userData))
   }
 

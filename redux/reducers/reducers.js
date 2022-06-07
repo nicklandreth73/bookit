@@ -10,9 +10,11 @@ import {
   checkBookingReducer,
   bookedDatesReducer,
   bookingsReducer,
+  bookingDetialsReducer,
 } from "./bookingReducers"
 
 const reducer = combineReducers({
+  bookingDetails: bookingDetialsReducer,
   allRooms: allRoomsReducer,
   roomDetails: roomDetailsReducer,
   auth: authReducer,

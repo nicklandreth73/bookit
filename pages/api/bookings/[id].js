@@ -1,7 +1,9 @@
 import nc from "next-connect"
 import dbConnect from "../../../config/dbConnect"
 
-import { checkRoomAvailability } from "../../../controllers/bookingControllers"
+import { getBookingDetails } from "../../../controllers/bookingControllers"
+
+import { isAuthenticated } from "../../../middleware/auth"
 
 import onError from "../../../middleware/errors"
 
@@ -9,8 +11,6 @@ const handler = nc({ onError })
 
 dbConnect()
 
-console.log("connected to db")
-
-handler.get(checkRoomAvailability)
+handler.use(isAuthenticated).get(getBookingDetails)
 
 export default handler
