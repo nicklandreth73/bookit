@@ -22,6 +22,7 @@ const RoomDetails = () => {
   const [checkInDate, setCheckInDate] = useState()
   const [checkOutDate, setCheckOutDate] = useState()
   const [daysBooked, setDaysBooked] = useState()
+  const [paymentLoading, setPaymentLoading] = useState(false)
 
   const { user } = useSelector((state) => state.loadedUser)
   const { dates } = useSelector((state) => state.bookedDates)
@@ -84,12 +85,15 @@ const RoomDetails = () => {
     }
   }
 
+  async fun
+
   useEffect(() => {
     dispatch(getBookedDates(id))
     if (error) {
       toast.error(error)
       dispatch(clearErrors())
     }
+    return () => dispatch({ type: CHECK_BOOKING_RESET })
   }, [dispatch, id])
 
   return (
